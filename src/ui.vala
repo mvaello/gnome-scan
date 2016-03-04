@@ -254,28 +254,28 @@ public class UserInterface : Gtk.ApplicationWindow
     }
 
     public signal void start_scan (string? device, ScanOptions options);
-    public signal void stop_scan ();
+    public signal void stop_scan();
     public signal void email (string profile, int quality);
 
     public UserInterface ()
     {
         settings = new Settings ("org.gnome.SimpleScan");
 
-        book = new Book ();
+        book = new Book();
         book.page_added.connect (page_added_cb);
         book.reordered.connect (reordered_cb);
         book.page_removed.connect (page_removed_cb);
         book.needs_saving_changed.connect (needs_saving_cb);
 
-        load ();
+        load();
 
-        autosave_manager = new AutosaveManager ();
+        autosave_manager = new AutosaveManager();
         autosave_manager.book = book;
-        autosave_manager.load ();
+        autosave_manager.load();
 
         if (book.n_pages == 0)
         {
-            add_default_page ();
+            add_default_page();
             book.needs_saving = false;
         }
         else
@@ -316,8 +316,8 @@ public class UserInterface : Gtk.ApplicationWindow
                                             "%s", error_title);
         dialog.add_button (_("_Close"), 0);
         dialog.format_secondary_text ("%s", error_text);
-        dialog.run ();
-        dialog.destroy ();
+        dialog.run();
+        dialog.destroy();
     }
 
     public void authorize (string resource, out string username, out string password)
@@ -330,7 +330,7 @@ public class UserInterface : Gtk.ApplicationWindow
         authorize_label.set_text (description);
 
         authorize_dialog.visible = true;
-        authorize_dialog.run ();
+        authorize_dialog.run();
         authorize_dialog.visible = false;
 
         username = username_entry.text;
@@ -479,7 +479,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
         setting_devices = false;
 
-        update_info_bar ();
+        update_info_bar();
     }
 
     private void add_default_page ()
@@ -515,13 +515,13 @@ public class UserInterface : Gtk.ApplicationWindow
         save_dialog.set_current_name (_("Scanned Document.pdf"));
 
         /* Filter to only show images by default */
-        var filter = new Gtk.FileFilter ();
+        var filter = new Gtk.FileFilter();
         filter.set_filter_name (/* Save dialog: Filter name to show only image files */
                                 _("Image Files"));
-        filter.add_pixbuf_formats ();
+        filter.add_pixbuf_formats();
         filter.add_mime_type ("application/pdf");
         save_dialog.add_filter (filter);
-        filter = new Gtk.FileFilter ();
+        filter = new Gtk.FileFilter();
         filter.set_filter_name (/* Save dialog: Filter name to show all files */
                                 _("All Files"));
         filter.add_pattern ("*");
@@ -559,7 +559,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
         var file_type_combo = new Gtk.ComboBox.with_model (file_type_store);
         file_type_combo.visible = true;
-        var renderer = new Gtk.CellRendererText ();
+        var renderer = new Gtk.CellRendererText();
         file_type_combo.pack_start (renderer, true);
         file_type_combo.add_attribute (renderer, "text", 0);
 
@@ -571,7 +571,7 @@ public class UserInterface : Gtk.ApplicationWindow
             if (file_type_combo.get_active_iter (out i))
                 file_type_store.get (i, 1, out extension, -1);
 
-            var path = save_dialog.get_filename ();
+            var path = save_dialog.get_filename();
             var filename = Path.get_basename (path);
 
             /* Replace extension */
@@ -583,7 +583,7 @@ public class UserInterface : Gtk.ApplicationWindow
         });
         box.pack_start (file_type_combo, false, false, 0);
 
-        var response = save_dialog.run ();
+        var response = save_dialog.run();
 
         string? uri = null;
         if (response == Gtk.ResponseType.ACCEPT)
@@ -593,19 +593,19 @@ public class UserInterface : Gtk.ApplicationWindow
             if (file_type_combo.get_active_iter (out i))
                 file_type_store.get (i, 1, out extension, -1);
 
-            var path = save_dialog.get_filename ();
+            var path = save_dialog.get_filename();
             var filename = Path.get_basename (path);
 
             var extension_index = filename.last_index_of_char ('.');
             if (extension_index < 0)
                 path += extension;
 
-            uri = File.new_for_path (path).get_uri ();
+            uri = File.new_for_path (path).get_uri();
         }
 
         settings.set_string ("save-directory", save_dialog.get_current_folder ());
 
-        save_dialog.destroy ();
+        save_dialog.destroy();
         save_dialog = null;
 
         return uri;
@@ -617,7 +617,7 @@ public class UserInterface : Gtk.ApplicationWindow
         if (book_uri != null && !force_choose_location)
             uri = book_uri;
         else
-            uri = choose_file_location ();
+            uri = choose_file_location();
         if (uri == null)
             return false;
 
@@ -625,7 +625,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
         debug ("Saving to '%s'", uri);
 
-        var uri_lower = uri.down ();
+        var uri_lower = uri.down();
         string format = "jpeg";
         if (uri_lower.has_suffix (".pdf"))
             format = "pdf";
@@ -636,14 +636,14 @@ public class UserInterface : Gtk.ApplicationWindow
         else if (uri_lower.has_suffix (".tif") || uri_lower.has_suffix (".tiff"))
             format = "tiff";
 
-        show_progress_dialog ();
+        show_progress_dialog();
         try
         {
             book.save (format, quality, file);
         }
         catch (Error e)
         {
-            hide_progress_dialog ();
+            hide_progress_dialog();
             warning ("Error saving file: %s", e.message);
             show_error (/* Title of error dialog when save failed */
                         _("Failed to save file"),
@@ -674,8 +674,8 @@ public class UserInterface : Gtk.ApplicationWindow
         dialog.add_button (_("_Cancel"), Gtk.ResponseType.CANCEL);
         dialog.add_button (_("_Save"), Gtk.ResponseType.YES);
 
-        var response = dialog.run ();
-        dialog.destroy ();
+        var response = dialog.run();
+        dialog.destroy();
 
         switch (response)
         {
@@ -693,8 +693,8 @@ public class UserInterface : Gtk.ApplicationWindow
 
     private void clear_document ()
     {
-        book.clear ();
-        add_default_page ();
+        book.clear();
+        add_default_page();
         book_uri = null;
         book.needs_saving = false;
         save_as_menuitem.sensitive = false;
@@ -710,8 +710,8 @@ public class UserInterface : Gtk.ApplicationWindow
             return;
 
         if (scanning)
-            stop_scan ();
-        clear_document ();
+            stop_scan();
+        clear_document();
     }
 
     [GtkCallback]
@@ -849,17 +849,17 @@ public class UserInterface : Gtk.ApplicationWindow
 
     private ScanOptions make_scan_options ()
     {
-        var options = new ScanOptions ();
+        var options = new ScanOptions();
         if (document_hint == "text")
         {
             options.scan_mode = ScanMode.GRAY;
-            options.dpi = get_text_dpi ();
+            options.dpi = get_text_dpi();
             options.depth = 2;
         }
         else
         {
             options.scan_mode = ScanMode.COLOR;
-            options.dpi = get_photo_dpi ();
+            options.dpi = get_photo_dpi();
             options.depth = 8;
         }
         get_paper_size (out options.paper_width, out options.paper_height);
@@ -872,7 +872,7 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private void scan_button_clicked_cb (Gtk.Widget widget)
     {
-        var options = make_scan_options ();
+        var options = make_scan_options();
         options.type = ScanType.SINGLE;
         start_scan (selected_device, options);
     }
@@ -880,18 +880,18 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private void stop_scan_button_clicked_cb (Gtk.Widget widget)
     {
-        stop_scan ();
+        stop_scan();
     }
 
     [GtkCallback]
     private void continuous_scan_button_clicked_cb (Gtk.Widget widget)
     {
         if (scanning)
-            stop_scan ();
+            stop_scan();
         else
         {
-            var options = make_scan_options ();
-            options.type = get_page_side ();
+            var options = make_scan_options();
+            options.type = get_page_side();
             start_scan (selected_device, options);
         }
     }
@@ -899,12 +899,12 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private void preferences_button_clicked_cb (Gtk.Widget widget)
     {
-        preferences_dialog.present ();
+        preferences_dialog.present();
     }
 
     public void preferences_activate_cb ()
     {
-        preferences_dialog.present ();
+        preferences_dialog.present();
     }
 
     [GtkCallback]
@@ -942,7 +942,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
         updating_page_menu = true;
 
-        update_page_menu ();
+        update_page_menu();
 
         var menuitem = no_crop_menuitem;
         if (page.has_crop)
@@ -950,6 +950,18 @@ public class UserInterface : Gtk.ApplicationWindow
             var crop_name = page.crop_name;
             if (crop_name != null)
             {
+
+                switch (crop_name) {
+                
+                    case "A4":
+                        break;
+                    case "A5":
+                        break;
+                    case "letter":
+                        break;
+                    case "legal":
+                        break;
+                }
                 if (crop_name == "A4")
                     menuitem = a4_menuitem;
                 else if (crop_name == "A5")
@@ -1017,7 +1029,7 @@ public class UserInterface : Gtk.ApplicationWindow
             return;
         var page = book_view.selected_page;
         if (page != null)
-            page.rotate_left ();
+            page.rotate_left();
     }
 
     [GtkCallback]
@@ -1027,7 +1039,7 @@ public class UserInterface : Gtk.ApplicationWindow
             return;
         var page = book_view.selected_page;
         if (page != null)
-            page.rotate_right ();
+            page.rotate_right();
     }
 
     private void set_crop (string? crop_name)
@@ -1045,7 +1057,7 @@ public class UserInterface : Gtk.ApplicationWindow
         }
 
         if (crop_name == null)
-            page.set_no_crop ();
+            page.set_no_crop();
         else if (crop_name == "custom")
         {
             var width = page.width;
@@ -1145,7 +1157,7 @@ public class UserInterface : Gtk.ApplicationWindow
         var page = book_view.selected_page;
         if (page == null)
             return;
-        page.rotate_crop ();
+        page.rotate_crop();
     }
 
     [GtkCallback]
@@ -1174,7 +1186,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
     private void reorder_document ()
     {
-        var dialog = new Gtk.Window ();
+        var dialog = new Gtk.Window();
         dialog.type_hint = Gdk.WindowTypeHint.DIALOG;
         dialog.modal = true;
         dialog.border_width = 12;
@@ -1185,7 +1197,7 @@ public class UserInterface : Gtk.ApplicationWindow
         {
             if (e.state == 0 && e.keyval == Gdk.Key.Escape)
             {
-                dialog.destroy ();
+                dialog.destroy();
                 return true;
             }
 
@@ -1193,7 +1205,7 @@ public class UserInterface : Gtk.ApplicationWindow
         });
         dialog.visible = true;
 
-        var g = new Gtk.Grid ();
+        var g = new Gtk.Grid();
         g.row_homogeneous = true;
         g.row_spacing = 6;
         g.column_homogeneous = true;
@@ -1205,8 +1217,8 @@ public class UserInterface : Gtk.ApplicationWindow
         var b = make_reorder_button (_("Combine sides"), "F1F2F3B1B2B3-F1B1F2B2F3B3");
         b.clicked.connect (() =>
         {
-            book.combine_sides ();
-            dialog.destroy ();
+            book.combine_sides();
+            dialog.destroy();
         });
         b.visible = true;
         g.attach (b, 0, 0, 1, 1);
@@ -1215,8 +1227,8 @@ public class UserInterface : Gtk.ApplicationWindow
         b = make_reorder_button (_("Combine sides (reverse)"), "F1F2F3B3B2B1-F1B1F2B2F3B3");
         b.clicked.connect (() =>
         {
-            book.combine_sides_reverse ();
-            dialog.destroy ();
+            book.combine_sides_reverse();
+            dialog.destroy();
         });
         b.visible = true;
         g.attach (b, 1, 0, 1, 1);
@@ -1225,8 +1237,8 @@ public class UserInterface : Gtk.ApplicationWindow
         b = make_reorder_button (_("Reverse"), "C1C2C3C4C5C6-C6C5C4C3C2C1");
         b.clicked.connect (() =>
         {
-            book.reverse ();
-            dialog.destroy ();
+            book.reverse();
+            dialog.destroy();
         });
         b.visible = true;
         g.attach (b, 0, 2, 1, 1);
@@ -1235,28 +1247,28 @@ public class UserInterface : Gtk.ApplicationWindow
         b = make_reorder_button (_("Keep unchanged"), "C1C2C3C4C5C6-C1C2C3C4C5C6");
         b.clicked.connect (() =>
         {
-            dialog.destroy ();
+            dialog.destroy();
         });
         b.visible = true;
         g.attach (b, 1, 2, 1, 1);
 
-        dialog.present ();
+        dialog.present();
     }
 
     public void reorder_document_activate_cb ()
     {
-        reorder_document ();
+        reorder_document();
     }
 
     [GtkCallback]
     private void reorder_menuitem_activate_cb (Gtk.Widget widget)
     {
-        reorder_document ();
+        reorder_document();
     }
 
     private Gtk.Button make_reorder_button (string text, string items)
     {
-        var b = new Gtk.Button ();
+        var b = new Gtk.Button();
 
         var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
         vbox.visible = true;
@@ -1377,7 +1389,7 @@ public class UserInterface : Gtk.ApplicationWindow
                             Gtk.PrintContext   print_context,
                             int                page_number)
     {
-        var context = print_context.get_cairo_context ();
+        var context = print_context.get_cairo_context();
         var page = book.get_page (page_number);
 
         /* Rotate to same aspect */
@@ -1395,7 +1407,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
         var image = page.get_image (true);
         Gdk.cairo_set_source_pixbuf (context, image, 0, 0);
-        context.paint ();
+        context.paint();
     }
 
     [GtkCallback]
@@ -1411,7 +1423,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
     private void print_document ()
     {
-        var print = new Gtk.PrintOperation ();
+        var print = new Gtk.PrintOperation();
         print.n_pages = (int) book.n_pages;
         print.draw_page.connect (draw_page);
 
@@ -1430,12 +1442,12 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private void print_button_clicked_cb (Gtk.Widget widget)
     {
-        print_document ();
+        print_document();
     }
 
     public void print_document_activate_cb ()
     {
-        print_document ();
+        print_document();
     }
 
     private void launch_help ()
@@ -1455,12 +1467,12 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private void help_contents_menuitem_activate_cb (Gtk.Widget widget)
     {
-        launch_help ();
+        launch_help();
     }
 
     public void help_contents_activate_cb ()
     {
-        launch_help ();
+        launch_help();
     }
 
     private void show_about ()
@@ -1494,12 +1506,12 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private void about_menuitem_activate_cb (Gtk.Widget widget)
     {
-        show_about ();
+        show_about();
     }
 
     public void about_activate_cb ()
     {
-        show_about ();
+        show_about();
     }
 
     private bool on_quit ()
@@ -1510,12 +1522,12 @@ public class UserInterface : Gtk.ApplicationWindow
                              _("Quit without Saving")))
             return false;
 
-        destroy ();
+        destroy();
 
         if (save_state_timeout != 0)
             save_state (true);
 
-        autosave_manager.cleanup ();
+        autosave_manager.cleanup();
 
         return true;
     }
@@ -1523,12 +1535,12 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private void quit_menuitem_activate_cb (Gtk.Widget widget)
     {
-        on_quit ();
+        on_quit();
     }
 
     public void quit_activate_cb ()
     {
-        on_quit ();
+        on_quit();
     }
 
     [GtkCallback]
@@ -1538,7 +1550,7 @@ public class UserInterface : Gtk.ApplicationWindow
         {
             window_width = event.width;
             window_height = event.height;
-            save_state ();
+            save_state();
         }
 
         return false;
@@ -1550,18 +1562,18 @@ public class UserInterface : Gtk.ApplicationWindow
         {
         /* Change scanner */
         case 1:
-            device_combo.grab_focus ();
-            preferences_dialog.present ();
+            device_combo.grab_focus();
+            preferences_dialog.present();
             break;
         /* Install drivers */
         case 2:
-            install_drivers ();
+            install_drivers();
             break;
         default:
             have_error = false;
             error_title = null;
             error_text = null;
-            update_info_bar ();
+            update_info_bar();
             break;
         }
     }
@@ -1613,10 +1625,10 @@ public class UserInterface : Gtk.ApplicationWindow
         instructions_box.visible = true;
         dialog.get_content_area ().pack_start (instructions_box, true, true, 0);
         
-        var stack = new Gtk.Stack ();
+        var stack = new Gtk.Stack();
         instructions_box.pack_start (stack, false, false, 0);
 
-        var spinner = new Gtk.Spinner ();
+        var spinner = new Gtk.Spinner();
         spinner.visible = true;
         stack.add (spinner);
 
@@ -1659,7 +1671,7 @@ public class UserInterface : Gtk.ApplicationWindow
                         status_label.set_text ("☑");
                     else
                     {
-                        var e = results.get_error_code ();
+                        var e = results.get_error_code();
                         /* Label shown if failed to install drivers */
                         result_text = _("Failed to install drivers (error code %d).").printf (e.code);
                     }
@@ -1678,24 +1690,24 @@ public class UserInterface : Gtk.ApplicationWindow
 #endif
         }
 
-        dialog.run ();
-        dialog.destroy ();
+        dialog.run();
+        dialog.destroy();
     }
 
 #if HAVE_PACKAGEKIT
     private async Pk.Results? install_packages (string[] packages, Pk.ProgressCallback progress_callback) throws GLib.Error
     {
-        var task = new Pk.Task ();
+        var task = new Pk.Task();
         Pk.Results results;
         results = yield task.resolve_async (Pk.Filter.NOT_INSTALLED, packages, null, progress_callback);
         if (results == null || results.get_error_code () != null)
             return results;
 
-        var package_array = results.get_package_array ();
+        var package_array = results.get_package_array();
         var package_ids = new string[package_array.length + 1];
         package_ids[package_array.length] = null;
         for (var i = 0; i < package_array.length; i++)
-            package_ids[i] = package_array.data[i].get_id ();
+            package_ids[i] = package_array.data[i].get_id();
 
         return yield task.install_packages_async (package_ids, null, progress_callback);
     }
@@ -1707,7 +1719,7 @@ public class UserInterface : Gtk.ApplicationWindow
         if ((event.changed_mask & Gdk.WindowState.MAXIMIZED) != 0)
         {
             window_is_maximized = (event.new_window_state & Gdk.WindowState.MAXIMIZED) != 0;
-            save_state ();
+            save_state();
         }
         return false;
     }
@@ -1715,7 +1727,7 @@ public class UserInterface : Gtk.ApplicationWindow
     [GtkCallback]
     private bool window_delete_event_cb (Gtk.Widget widget, Gdk.EventAny event)
     {
-        return !on_quit ();
+        return !on_quit();
     }
 
     private void page_size_changed_cb (Page page)
@@ -1723,13 +1735,13 @@ public class UserInterface : Gtk.ApplicationWindow
         default_page_width = page.width;
         default_page_height = page.height;
         default_page_dpi = page.dpi;
-        save_state ();
+        save_state();
     }
 
     private void page_scan_direction_changed_cb (Page page)
     {
         default_page_scan_direction = page.scan_direction;
-        save_state ();
+        save_state();
     }
 
     private void page_added_cb (Book book, Page page)
@@ -1739,12 +1751,12 @@ public class UserInterface : Gtk.ApplicationWindow
         page.size_changed.connect (page_size_changed_cb);
         page.scan_direction_changed.connect (page_scan_direction_changed_cb);
 
-        update_page_menu ();
+        update_page_menu();
     }
 
     private void reordered_cb (Book book)
     {
-        update_page_menu ();
+        update_page_menu();
     }
 
     private void page_removed_cb (Book book, Page page)
@@ -1754,14 +1766,14 @@ public class UserInterface : Gtk.ApplicationWindow
 
         /* If this is the last page add a new blank one */
         if (book.n_pages == 0)
-            add_default_page ();
+            add_default_page();
 
-        update_page_menu ();
+        update_page_menu();
     }
 
     private void set_dpi_combo (Gtk.ComboBox combo, int default_dpi, int current_dpi)
     {
-        var renderer = new Gtk.CellRendererText ();
+        var renderer = new Gtk.CellRendererText();
         combo.pack_start (renderer, true);
         combo.add_attribute (renderer, "text", 1);
 
@@ -1776,7 +1788,7 @@ public class UserInterface : Gtk.ApplicationWindow
             else if (dpi == 75)
                 /* Preferences dialog: Label for minimum resolution in resolution list */
                 label = _("%d dpi (draft)").printf (dpi);
-            else if (dpi == 1200)
+            else if (dpi == 2400)
                 /* Preferences dialog: Label for maximum resolution in resolution list */
                 label = _("%d dpi (high resolution)").printf (dpi);
             else
@@ -1810,55 +1822,46 @@ public class UserInterface : Gtk.ApplicationWindow
 
         var app = Application.get_default () as Gtk.Application;
 
-        if (is_desktop ("Unity") || is_desktop ("XFCE") || is_desktop ("MATE") || is_desktop ("LXDE"))
-        {
-            set_titlebar (null);
-            menubar.visible = true;
-            toolbar.visible = true;
-        }
-        else
-        {
-            app.add_action_entries (action_entries, this);
+	    app.add_action_entries (action_entries, this);
 
-            var appmenu = new Menu ();
-            var section = new Menu ();
-            appmenu.append_section (null, section);
-            section.append (_("New Document"), "app.new_document");
+	    var appmenu = new Menu();
+	    var section = new Menu();
+	    appmenu.append_section (null, section);
+	    section.append (_("New Document"), "app.new_document");
 
-            section = new Menu ();
-            appmenu.append_section (null, section);
-            var menu = new Menu ();
-            section.append_submenu (_("Document"), menu);
-            menu.append (_("Reorder Pages"), "app.reorder");
-            menu.append (_("Save"), "app.save");
-            menu.append (_("Save As..."), "app.save_as");
-            menu.append (_("Email..."), "app.email");
-            menu.append (_("Print..."), "app.print");
+	    section = new Menu();
+	    appmenu.append_section (null, section);
+	    var menu = new Menu();
+	    section.append_submenu (_("Document"), menu);
+	    menu.append (_("Reorder Pages"), "app.reorder");
+	menu.append (_("Save"), "app.save");
+	menu.append (_("Save As..."), "app.save_as");
+	    menu.append (_("Email..."), "app.email");
+	    menu.append (_("Print..."), "app.print");
 
-            section = new Menu ();
-            appmenu.append_section (null, section);
-            section.append (_("Preferences"), "app.preferences");
+	    section = new Menu();
+	    appmenu.append_section (null, section);
+	    section.append (_("Preferences"), "app.preferences");
 
-            section = new Menu ();
-            appmenu.append_section (null, section);
-            section.append (_("Help"), "app.help");
-            section.append (_("About"), "app.about");
-            section.append (_("Quit"), "app.quit");
+	    section = new Menu();
+	    appmenu.append_section (null, section);
+	    section.append (_("Help"), "app.help");
+	    section.append (_("About"), "app.about");
+	    section.append (_("Quit"), "app.quit");
 
-            app.app_menu = appmenu;
+	    app.app_menu = appmenu;
 
-            app.add_accelerator ("<Ctrl>N", "app.new_document", null);
-            app.add_accelerator ("<Ctrl>S", "app.save", null);
-            app.add_accelerator ("<Shift><Ctrl>S", "app.save_as", null);
-            app.add_accelerator ("<Ctrl>E", "app.email", null);
-            app.add_accelerator ("<Ctrl>P", "app.print", null);
-            app.add_accelerator ("F1", "app.help", null);
-            app.add_accelerator ("<Ctrl>Q", "app.quit", null);
-        }
+	    app.add_accelerator ("<Ctrl>N", "app.new_document", null);
+	    app.add_accelerator ("<Ctrl>S", "app.save", null);
+	    app.add_accelerator ("<Shift><Ctrl>S", "app.save_as", null);
+	    app.add_accelerator ("<Ctrl>E", "app.email", null);
+	    app.add_accelerator ("<Ctrl>P", "app.print", null);
+	    app.add_accelerator ("F1", "app.help", null);
+	    app.add_accelerator ("<Ctrl>Q", "app.quit", null);
         app.add_window (this);
 
         /* Add InfoBar (not supported in Glade) */
-        info_bar = new Gtk.InfoBar ();
+        info_bar = new Gtk.InfoBar();
         info_bar.response.connect (info_bar_response_cb);
         main_vbox.pack_start (info_bar, false, true, 0);
         var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12);
@@ -1910,17 +1913,17 @@ public class UserInterface : Gtk.ApplicationWindow
         set_dpi_combo (photo_dpi_combo, DEFAULT_PHOTO_DPI, dpi);
         photo_dpi_combo.changed.connect (() => { settings.set_int ("photo-dpi", get_photo_dpi ()); });
 
-        var renderer = new Gtk.CellRendererText ();
+        var renderer = new Gtk.CellRendererText();
         device_combo.pack_start (renderer, true);
         device_combo.add_attribute (renderer, "text", 1);
 
-        renderer = new Gtk.CellRendererText ();
+        renderer = new Gtk.CellRendererText();
         page_side_combo.pack_start (renderer, true);
         page_side_combo.add_attribute (renderer, "text", 1);
         set_page_side ((ScanType) settings.get_enum ("page-side"));
         page_side_combo.changed.connect (() => { settings.set_enum ("page-side", get_page_side ()); });
 
-        renderer = new Gtk.CellRendererText ();
+        renderer = new Gtk.CellRendererText();
         paper_size_combo.pack_start (renderer, true);
         paper_size_combo.add_attribute (renderer, "text", 2);
         var paper_width = settings.get_int ("paper-width");
@@ -1980,7 +1983,7 @@ public class UserInterface : Gtk.ApplicationWindow
         preferences_dialog.transient_for = this;
 
         /* Load previous state */
-        load_state ();
+        load_state();
 
         /* Restore window size */
         debug ("Restoring window to %dx%d pixels", window_width, window_height);
@@ -1988,7 +1991,7 @@ public class UserInterface : Gtk.ApplicationWindow
         if (window_is_maximized)
         {
             debug ("Restoring window to maximized");
-            maximize ();
+            maximize();
         }
 
         progress_dialog = new ProgressBarDialog (this, _("Saving document..."));
@@ -2017,7 +2020,7 @@ public class UserInterface : Gtk.ApplicationWindow
     {
         debug ("Loading state from %s", state_filename);
 
-        var f = new KeyFile ();
+        var f = new KeyFile();
         try
         {
             f.load_from_file (state_filename, KeyFileFlags.NONE);
@@ -2108,7 +2111,7 @@ public class UserInterface : Gtk.ApplicationWindow
 
         debug ("Saving state to %s", state_filename);
 
-        var f = new KeyFile ();
+        var f = new KeyFile();
         f.set_integer ("window", "width", window_width);
         f.set_integer ("window", "height", window_height);
         f.set_boolean ("window", "is-maximized", window_is_maximized);
@@ -2144,7 +2147,7 @@ public class UserInterface : Gtk.ApplicationWindow
     {
         /* Prevent GUI from freezing */
         while (Gtk.events_pending ())
-          Gtk.main_iteration ();
+          Gtk.main_iteration();
 
         var total = (int) book.n_pages;
         var fraction = (page_number + 1.0) / total;
@@ -2176,7 +2179,7 @@ public class UserInterface : Gtk.ApplicationWindow
         this.error_title = error_title;
         this.error_text = error_text;
         error_change_scanner_hint = change_scanner_hint;
-        update_info_bar ();
+        update_info_bar();
     }
 
     public void start ()
@@ -2203,7 +2206,7 @@ private class ProgressBarDialog : Gtk.Window
 
     public ProgressBarDialog (Gtk.ApplicationWindow parent, string title)
     {
-        bar = new Gtk.ProgressBar ();
+        bar = new Gtk.ProgressBar();
         var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
         var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
         hbox.hexpand = true;
@@ -2289,8 +2292,8 @@ private class PageIcon : Gtk.DrawingArea
 
     public override bool draw (Cairo.Context c)
     {
-        var w = get_allocated_width ();
-        var h = get_allocated_height ();
+        var w = get_allocated_width();
+        var h = get_allocated_height();
         if (w * Math.SQRT2 > h)
             w = (int) Math.round (h / Math.SQRT2);
         else
@@ -2301,11 +2304,11 @@ private class PageIcon : Gtk.DrawingArea
         c.rectangle (0.5, 0.5, w - 1, h - 1);
 
         c.set_source_rgb (r, g, b);
-        c.fill_preserve ();
+        c.fill_preserve();
 
         c.set_line_width (1.0);
         c.set_source_rgb (0.0, 0.0, 0.0);
-        c.stroke ();
+        c.stroke();
 
         Cairo.TextExtents extents;
         c.text_extents (text, out extents);

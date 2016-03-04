@@ -660,32 +660,32 @@ public class Page
         if (color_profile != null)
             icc_profile_data = get_icc_data_encoded (color_profile);
 
-        if (strcmp (type, "jpeg") == 0)
-        {
-            string[] keys = { "x-dpi", "y-dpi", "quality", "icc-profile", null };
-            string[] values = { "%d".printf (dpi), "%d".printf (dpi), "%d".printf (quality), icc_profile_data, null };
-            if (icc_profile_data == null)
-                keys[3] = null;
-            writer.save (image, "jpeg", keys, values);
-        }
-        else if (strcmp (type, "png") == 0)
-        {
-            string[] keys = { "x-dpi", "y-dpi", "icc-profile", null };
-            string[] values = { "%d".printf (dpi), "%d".printf (dpi), icc_profile_data, null };
-            if (icc_profile_data == null)
-                keys[2] = null;
-            writer.save (image, "png", keys, values);
-        }
-        else if (strcmp (type, "tiff") == 0)
-        {
-            string[] keys = { "x-dpi", "y-dpi", "compression", "icc-profile", null };
-            string[] values = { "%d".printf (dpi), "%d".printf (dpi), "8" /* Deflate compression */, icc_profile_data, null };
-            if (icc_profile_data == null)
-                keys[3] = null;
-            writer.save (image, "tiff", keys, values);
-        }
-        else
+        switch (type) {
+        case "jpeg":
+		    string[] keys = { "x-dpi", "y-dpi", "quality", "icc-profile", null };
+		    string[] values = { "%d".printf (dpi), "%d".printf (dpi), "%d".printf (quality), icc_profile_data, null };
+		    if (icc_profile_data == null)
+		        keys[3] = null;
+		    writer.save (image, "jpeg", keys, values);
+        	break;
+        case "png":
+		    string[] keys = { "x-dpi", "y-dpi", "icc-profile", null };
+		    string[] values = { "%d".printf (dpi), "%d".printf (dpi), icc_profile_data, null };
+		    if (icc_profile_data == null)
+		        keys[2] = null;
+		    writer.save (image, "png", keys, values);
+            break;
+		case "tiff":
+		    string[] keys = { "x-dpi", "y-dpi", "compression", "icc-profile", null };
+		    string[] values = { "%d".printf (dpi), "%d".printf (dpi), "8" /* Deflate compression */, icc_profile_data, null };
+		    if (icc_profile_data == null)
+		        keys[3] = null;
+		    writer.save (image, "tiff", keys, values);
+            break;
+		default:
             throw new FileError.INVAL ("Unknown file type: %s".printf (type));
+            break;
+        }
     }
 }
 

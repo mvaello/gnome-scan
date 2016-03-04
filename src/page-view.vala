@@ -45,7 +45,7 @@ public class PageView
         }
     }
 
-    private int border_width = 1;
+    private int border_width = 0;
 
     /* True if image needs to be regenerated */
     private bool update_image = true;
