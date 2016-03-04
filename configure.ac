@@ -29,6 +29,8 @@ PKG_CHECK_MODULES(SIMPLE_SCAN, [
     cairo
     gdk-pixbuf-2.0
     gusb
+    colord
+    packagekit-glib2
 ])
 
 AC_ARG_ENABLE([colord],
