@@ -90,7 +90,7 @@ public class Page
     public ScanDirection scan_direction
     {
         get { return scan_direction_; }
-        
+
         set
         {
             if (scan_direction_ == value)
@@ -142,7 +142,7 @@ public class Page
             if (has_crop)
                 crop_changed ();
         }
-        
+
         default = ScanDirection.TOP_TO_BOTTOM;
     }
 
@@ -373,7 +373,7 @@ public class Page
     {
         return_if_fail (width >= 1);
         return_if_fail (height >= 1);
-        
+
         if (crop_name == null && has_crop && crop_width == width && crop_height == height)
             return;
         crop_name = null;
@@ -641,9 +641,9 @@ public class Page
         /* Encode into base64 */
         return Base64.encode ((uchar[]) contents.to_utf8 ());
     }
-    
+
     public void copy_to_clipboard (Gtk.Window window)
-    {        
+    {
         var display = window.get_display ();
         var clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
         var image = get_image (true);
@@ -684,7 +684,6 @@ public class Page
             break;
 		default:
             throw new FileError.INVAL ("Unknown file type: %s".printf (type));
-            break;
         }
     }
 }

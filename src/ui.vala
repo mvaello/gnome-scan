@@ -33,10 +33,6 @@ public class UserInterface : Gtk.ApplicationWindow
     private Settings settings;
 
     [GtkChild]
-    private Gtk.MenuBar menubar;
-    [GtkChild]
-    private Gtk.Toolbar toolbar;
-    [GtkChild]
     private Gtk.Menu page_menu;
     [GtkChild]
     private Gtk.Box main_vbox;
@@ -952,7 +948,7 @@ public class UserInterface : Gtk.ApplicationWindow
             {
 
                 switch (crop_name) {
-                
+
                     case "A4":
                         break;
                     case "A5":
@@ -1624,7 +1620,7 @@ public class UserInterface : Gtk.ApplicationWindow
         var instructions_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
         instructions_box.visible = true;
         dialog.get_content_area ().pack_start (instructions_box, true, true, 0);
-        
+
         var stack = new Gtk.Stack();
         instructions_box.pack_start (stack, false, false, 0);
 
@@ -1638,14 +1634,14 @@ public class UserInterface : Gtk.ApplicationWindow
 
         var instructions_label = new Gtk.Label (instructions);
         instructions_label.visible = true;
-        instructions_label.xalign = 0f;        
+        instructions_label.xalign = 0f;
         instructions_label.use_markup = true;
         instructions_box.pack_start (instructions_label, false, false, 0);
 
         label = new Gtk.Label (/* Message in driver install dialog */
                                _("Once installed you will need to restart Simple Scan."));
         label.visible = true;
-        label.xalign = 0f;        
+        label.xalign = 0f;
         dialog.get_content_area ().border_width = 12;
         dialog.get_content_area ().pack_start (label, true, true, 0);
 
@@ -1996,19 +1992,6 @@ public class UserInterface : Gtk.ApplicationWindow
 
         progress_dialog = new ProgressBarDialog (this, _("Saving document..."));
         book.saving.connect (book_saving_cb);
-    }
-
-    private bool is_desktop (string name)
-    {
-        var desktop_name_list = Environment.get_variable ("XDG_CURRENT_DESKTOP");
-        if (desktop_name_list == null)
-            return false;
-
-        foreach (var n in desktop_name_list.split (":"))
-            if (n == name)
-                return true;
-
-        return false;
     }
 
     private string state_filename
