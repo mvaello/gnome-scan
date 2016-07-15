@@ -24,7 +24,8 @@ public class Page
     {
         get
         {
-            if (scan_direction == ScanDirection.TOP_TO_BOTTOM || scan_direction == ScanDirection.BOTTOM_TO_TOP)
+            if (scan_direction == ScanDirection.TOP_TO_BOTTOM
+                || scan_direction == ScanDirection.BOTTOM_TO_TOP)
                 return scan_width;
             else
                 return scan_height;
@@ -36,7 +37,8 @@ public class Page
     {
         get
         {
-            if (scan_direction == ScanDirection.TOP_TO_BOTTOM || scan_direction == ScanDirection.BOTTOM_TO_TOP)
+            if (scan_direction == ScanDirection.TOP_TO_BOTTOM
+                || scan_direction == ScanDirection.BOTTOM_TO_TOP)
                 return scan_height;
             else
                 return scan_width;

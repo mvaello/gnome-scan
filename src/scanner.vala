@@ -836,9 +836,8 @@ public class Scanner
         if (job.device == null)
         {
             warning ("No scan device available");
-            fail_scan (0,
-                       /* Error displayed when no scanners to scan with */
-                       _("No scanners available.  Please connect a scanner."));
+            /* Error displayed when no scanners to scan with */
+            fail_scan (0, _("No scanners available.  Please connect a scanner."));
             return;
         }
 
@@ -896,7 +895,7 @@ public class Scanner
                  debug ("SCAN_SOURCE not available, trying alternative \"doc-source\"");
                  option = get_option_by_name (handle, "doc-source", out index); /* Samsung unified driver. LP: #892915 */
             }
-            if (option != null)
+            else
             {
                 string[] flatbed_sources =
                 {
@@ -1211,16 +1210,20 @@ public class Scanner
 
         status = Sane.start (handle);
         debug ("sane_start (page=%d, pass=%d) -> %s", page_number, pass_number, Sane.status_to_string (status));
-        if (status == Sane.Status.GOOD)
-            state = ScanState.GET_PARAMETERS;
-        else if (status == Sane.Status.NO_DOCS)
-            do_complete_document ();
-        else
+        switch (status)
         {
+        case Sane.Status.GOOD:
+            state = ScanState.GET_PARAMETERS;
+            break;
+        case Sane.Status.NO_DOCS:
+            do_complete_document ();
+            break;
+        default:
             warning ("Unable to start device: %s", Sane.strstatus (status));
             fail_scan (status,
                        /* Error display when unable to start scan */
                        _("Unable to start scan"));
+            break;
         }
     }
 
@@ -1361,6 +1364,7 @@ public class Scanner
                 line.channel = 2;
                 break;
             }
+
             line.width = parameters.pixels_per_line;
             line.depth = parameters.depth;
             line.data = (owned) buffer;
@@ -1509,10 +1513,10 @@ public class Scanner
     {
         if (need_redetect)
             return;
+
         need_redetect = true;
 
         debug ("Requesting redetection of scan devices");
-
         request_queue.push (new RequestRedetect ());
     }
 
@@ -1593,7 +1597,7 @@ public class Scanner
             thread.join ();
             thread = null;
         }
-        
+
         Sane.exit ();
         debug ("sane_exit ()");
     }

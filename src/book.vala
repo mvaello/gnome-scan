@@ -155,7 +155,8 @@ public class Book
 
         /* Insert index before extension */
         var basename = Path.get_basename (uri);
-        string prefix = uri, suffix = "";
+        string prefix = uri;
+        string suffix = "";
         var extension_index = basename.last_index_of_char ('.');
         if (extension_index >= 0)
         {

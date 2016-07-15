@@ -188,9 +188,8 @@ public class SimpleScan : Gtk.Application
         add_devices (driver_map, samsung_devices, "samsung");
         add_devices (driver_map, hpaio_devices, "hpaio");
         add_devices (driver_map, epkowa_devices, "epkowa");
+
         var devices = GUsb.context_get_devices (usb_context);
-        /* Fixed in GUsb 0.2.7: https://github.com/hughsie/libgusb/commit/83a6b1a20653c1a17f0a909f08652b5e1df44075 */
-        /*var devices = GUSB.context_get_devices (context);*/
         for (var i = 0; i < devices.length; i++)
         {
             var device = devices.data[i];
@@ -230,7 +229,10 @@ public class SimpleScan : Gtk.Application
         var scan_direction = ScanDirection.TOP_TO_BOTTOM;
         bool do_crop = false;
         string named_crop = null;
-        var width = 100, height = 100, dpi = 100, cx = 0, cy = 0, cw = 0, ch = 0;
+        var width = 100, height = 100;
+        var dpi = 100;
+        var cx = 0, cy = 0, cw = 0, ch = 0;
+
         if (page != null)
         {
             scan_direction = page.scan_direction;
@@ -254,13 +256,13 @@ public class SimpleScan : Gtk.Application
         if (do_crop)
         {
             if (named_crop != null)
-            {
                 page.set_named_crop (named_crop);
-            }
             else
                 page.set_custom_crop (cw, ch);
+
             page.move_crop (cx, cy);
         }
+
         ui.selected_page = page;
         page.start ();
 
@@ -274,9 +276,8 @@ public class SimpleScan : Gtk.Application
 
     private string? get_profile_for_device (string device_name)
     {
-#if HAVE_COLORD
         var device_id = "sane:%s".printf (device_name);
-        debug ("Getting color profile for device %s", device_name);
+        debug ("Getting color profile for device '%s'", device_name);
 
         var client = new Colord.Client ();
         try
@@ -296,7 +297,7 @@ public class SimpleScan : Gtk.Application
         }
         catch (Error e)
         {
-            debug ("Unable to find colord device %s: %s", device_name, e.message);
+            debug ("Unable to find colord device '%s': %s", device_name, e.message);
             return null;
         }
 
@@ -306,14 +307,14 @@ public class SimpleScan : Gtk.Application
         }
         catch (Error e)
         {
-            debug ("Failed to get properties from the device %s: %s", device_name, e.message);
+            debug ("Failed to get properties from the device '%s': %s", device_name, e.message);
             return null;
         }
 
         var profile = device.get_default_profile ();
         if (profile == null)
         {
-            debug ("No default color profile for device: %s", device_name);
+            debug ("No default color profile for device: '%s'", device_name);
             return null;
         }
 
@@ -323,21 +324,18 @@ public class SimpleScan : Gtk.Application
         }
         catch (Error e)
         {
-            debug ("Failed to get properties from the profile %s: %s", device_name, e.message);
+            debug ("Failed to get properties from the profile '%s': %s", device_name, e.message);
             return null;
         }
 
         if (profile.filename == null)
         {
-            debug ("No icc color profile for the device %s", device_name);
+            debug ("No icc color profile for the device '%s'", device_name);
             return null;
         }
 
-        debug ("Using color profile %s for device %s", profile.filename, device_name);
+        debug ("Using color profile '%s' for device '%s'", profile.filename, device_name);
         return profile.filename;
-#else
-        return null;
-#endif
     }
 
     private void scanner_page_info_cb (Scanner scanner, ScanPageInfo info)
@@ -384,10 +382,8 @@ public class SimpleScan : Gtk.Application
         remove_empty_page ();
         if (error_code != Sane.Status.CANCELLED)
         {
-            ui.show_error (/* Title of error dialog when scan failed */
-                           _("Failed to scan"),
-                           error_string,
-                           have_devices);
+            /* Title of error dialog when scan failed */
+            ui.show_error (_("Failed to scan"), error_string, have_devices);
         }
     }
 
@@ -414,7 +410,8 @@ public class SimpleScan : Gtk.Application
     private string? get_temporary_filename (string prefix, string extension)
     {
         /* NOTE: I'm not sure if this is a 100% safe strategy to use g_file_open_tmp(), close and
-         * use the filename but it appears to work in practise */
+         * use the filename but it appears to work in practise
+         */
 
         var filename = "%sXXXXXX.%s".printf (prefix, extension);
         string path;
@@ -539,8 +536,8 @@ public class SimpleScan : Gtk.Application
         Intl.bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
         Intl.textdomain (GETTEXT_PACKAGE);
 
-        var c = new OptionContext (/* Arguments and description for --help text */
-                                   _("[DEVICE...] - Scanning utility"));
+        /* Arguments and description for --help text */
+        var c = new OptionContext (_("[DEVICE...] - Scanning utility"));
         c.add_main_entries (options, GETTEXT_PACKAGE);
         c.add_group (Gtk.get_option_group (true));
         try
@@ -550,15 +547,16 @@ public class SimpleScan : Gtk.Application
         catch (Error e)
         {
             stderr.printf ("%s\n", e.message);
-            stderr.printf (/* Text printed out when an unknown command-line argument provided */
-                           _("Run '%s --help' to see a full list of available command line options."), args[0]);
+            /* Text printed out when an unknown command-line argument provided */
+            stderr.printf (_("Run '%s --help' to see a full list of available command line options."), args[0]);
             stderr.printf ("\n");
             return Posix.EXIT_FAILURE;
         }
+
         if (show_version)
         {
             /* Note, not translated so can be easily parsed */
-            stderr.printf ("simple-scan %s\n", VERSION);
+            stderr.printf ("simple-san %s\n", VERSION);
             return Posix.EXIT_SUCCESS;
         }
 

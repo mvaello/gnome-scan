@@ -512,34 +512,37 @@ public class UserInterface : Gtk.ApplicationWindow
 
         /* Filter to only show images by default */
         var filter = new Gtk.FileFilter();
-        filter.set_filter_name (/* Save dialog: Filter name to show only image files */
-                                _("Image Files"));
+        /* Save dialog: Filter name to show only image files */
+        filter.set_filter_name (_("Image Files"));
         filter.add_pixbuf_formats();
         filter.add_mime_type ("application/pdf");
         save_dialog.add_filter (filter);
         filter = new Gtk.FileFilter();
-        filter.set_filter_name (/* Save dialog: Filter name to show all files */
-                                _("All Files"));
+        /* Save dialog: Filter name to show all files */
+        filter.set_filter_name (_("All Files"));
         filter.add_pattern ("*");
         save_dialog.add_filter (filter);
 
         var file_type_store = new Gtk.ListStore (2, typeof (string), typeof (string));
         Gtk.TreeIter iter;
         file_type_store.append (out iter);
+
+        /* Save dialog: Label for saving in PDF format */
         file_type_store.set (iter,
-                             /* Save dialog: Label for saving in PDF format */
                              0, _("PDF (multi-page document)"),
                              1, ".pdf",
                              -1);
         file_type_store.append (out iter);
+
+        /* Save dialog: Label for saving in JPEG format */
         file_type_store.set (iter,
-                             /* Save dialog: Label for saving in JPEG format */
                              0, _("JPEG (compressed)"),
                              1, ".jpg",
                              -1);
         file_type_store.append (out iter);
+
+        /* Save dialog: Label for saving in PNG format */
         file_type_store.set (iter,
-                             /* Save dialog: Label for saving in PNG format */
                              0, _("PNG (lossless)"),
                              1, ".png",
                              -1);
@@ -641,8 +644,8 @@ public class UserInterface : Gtk.ApplicationWindow
         {
             hide_progress_dialog();
             warning ("Error saving file: %s", e.message);
-            show_error (/* Title of error dialog when save failed */
-                        _("Failed to save file"),
+            /* Title of error dialog when save failed */
+            show_error (_("Failed to save file"),
                         e.message,
                         false);
             return false;
@@ -663,8 +666,9 @@ public class UserInterface : Gtk.ApplicationWindow
                                             Gtk.MessageType.WARNING,
                                             Gtk.ButtonsType.NONE,
                                             "%s", title);
+
+        /* Text in dialog warning when a document is about to be lost */
         dialog.format_secondary_text ("%s",
-                                      /* Text in dialog warning when a document is about to be lost*/
                                       _("If you don't save, changes will be permanently lost."));
         dialog.add_button (discard_label, Gtk.ResponseType.NO);
         dialog.add_button (_("_Cancel"), Gtk.ResponseType.CANCEL);
@@ -995,8 +999,8 @@ public class UserInterface : Gtk.ApplicationWindow
         }
         catch (Error e)
         {
-            show_error_dialog (/* Error message display when unable to save image for preview */
-                               _("Unable to save image for preview"),
+            /* Error message display when unable to save image for preview */
+            show_error_dialog (_("Unable to save image for preview"),
                                e.message);
             return;
         }

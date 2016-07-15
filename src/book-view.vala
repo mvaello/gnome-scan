@@ -34,7 +34,7 @@ public class BookView : Gtk.Box
             else
                 return null;
         }
-        set 
+        set
         {
             if (selected_page == value)
                 return;
@@ -504,12 +504,18 @@ public class BookView : Gtk.Box
         /* Modify page */
         if (event.button == 1)
         {
-            if (event.type == Gdk.EventType.BUTTON_PRESS)
+            switch (event.type)
+            {
+            case Gdk.EventType.BUTTON_PRESS:
                 selected_page_view.button_press (x, y);
-            else if (event.type == Gdk.EventType.BUTTON_RELEASE)
+                break;
+            case Gdk.EventType.BUTTON_RELEASE:
                 selected_page_view.button_release (x, y);
-            else if (event.type == Gdk.EventType.2BUTTON_PRESS)
+                break;
+            case Gdk.EventType.2BUTTON_PRESS:
                 show_page (selected_page);
+                break;
+            }
         }
 
         /* Show pop-up menu on right click */
@@ -565,20 +571,21 @@ public class BookView : Gtk.Box
         {
         case 0xff50: /* FIXME: GDK_Home */
             selected_page = book.get_page (0);
-            return true;
+            break;
         case 0xff51: /* FIXME: GDK_Left */
             select_page_view (get_prev_page (selected_page_view));
-            return true;
+            break;
         case 0xff53: /* FIXME: GDK_Right */
             select_page_view (get_next_page (selected_page_view));
-            return true;
+            break;
         case 0xFF57: /* FIXME: GDK_End */
             selected_page = book.get_page ((int) book.n_pages - 1);
-            return true;
-
+            break;
         default:
             return false;
         }
+
+        return true;
     }
 
     private bool focus_cb (Gtk.Widget widget, Gdk.EventFocus event)

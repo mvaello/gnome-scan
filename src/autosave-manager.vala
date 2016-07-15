@@ -328,7 +328,7 @@ public class AutosaveManager
             file.set_integer (page_name, "crop-height", page.crop_height);
         }
         file.set_value ("simple-scan", "pages", page_names);
- 
+
         try
         {
             DirUtils.create_with_parents (AUTOSAVE_DIR, 0777);
