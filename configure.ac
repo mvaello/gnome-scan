@@ -33,42 +33,6 @@ PKG_CHECK_MODULES(SIMPLE_SCAN, [
     packagekit-glib2
 ])
 
-AC_ARG_ENABLE([colord],
-    AS_HELP_STRING([--enable-colord],
-                   [Enable colord support[[default=auto]]]),
-    [enable_colord=$enableval],
-    [enable_colord=auto])
-have_colord=no
-if test x"$enable_colord" != "xno"; then
-    PKG_CHECK_MODULES(COLORD, [
-        colord
-    ],
-    [have_colord=yes],
-    [if test x"$enable_colord" = xauto; then
-        AC_MSG_FAILURE([--enable-colord was given, but could not be found])
-     fi
-    ])
-fi
-AM_CONDITIONAL(HAVE_COLORD, test $have_colord = yes)
-
-AC_ARG_ENABLE([packagekit],
-    AS_HELP_STRING([--enable-packagekit],
-                   [Enable packagekit support[[default=auto]]]),
-    [enable_packagekit=$enableval],
-    [enable_packagekit=auto])
-have_packagekit=no
-if test x"$enable_packagekit" != "xno"; then
-    PKG_CHECK_MODULES(PACKAGEKIT, [
-        packagekit-glib2
-    ],
-    [have_packagekit=yes],
-    [if test x"$enable_packagekit" = xauto; then
-        AC_MSG_FAILURE([--enable-packagekit was given, but could not be found])
-     fi
-    ])
-fi    
-AM_CONDITIONAL(HAVE_PACKAGEKIT, test $have_packagekit = yes)
-
 AC_CHECK_HEADERS([sane/sane.h],[],[AC_MSG_ERROR([SANE not found])])
 AC_CHECK_HEADERS([sane/saneopts.h],[],[AC_MSG_ERROR([SANE not found])])
 
@@ -108,6 +72,4 @@ echo "
                     ====================
 
         prefix:                   $prefix
-        PackageKit support:       $have_packagekit
-        Color management:         $have_colord
 "

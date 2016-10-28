@@ -1612,7 +1612,7 @@ public class UserInterface : Gtk.ApplicationWindow
         var instructions_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
         instructions_box.visible = true;
         dialog.get_content_area ().pack_start (instructions_box, true, true, 0);
-        
+
         var stack = new Gtk.Stack ();
         instructions_box.pack_start (stack, false, false, 0);
 
@@ -1626,20 +1626,19 @@ public class UserInterface : Gtk.ApplicationWindow
 
         var instructions_label = new Gtk.Label (instructions);
         instructions_label.visible = true;
-        instructions_label.xalign = 0f;        
+        instructions_label.xalign = 0f;
         instructions_label.use_markup = true;
         instructions_box.pack_start (instructions_label, false, false, 0);
 
         label = new Gtk.Label (/* Message in driver install dialog */
                                _("Once installed you will need to restart Simple Scan."));
         label.visible = true;
-        label.xalign = 0f;        
+        label.xalign = 0f;
         dialog.get_content_area ().border_width = 12;
         dialog.get_content_area ().pack_start (label, true, true, 0);
 
         if (packages_to_install.length > 0)
         {
-#if HAVE_PACKAGEKIT
             stack.visible = true;
             spinner.active = true;
             instructions_label.set_text (/* Label shown while installing drivers */
@@ -1672,17 +1671,12 @@ public class UserInterface : Gtk.ApplicationWindow
                 }
                 instructions_label.set_text (result_text);
             });
-#else
-            instructions_label.set_text (/* Label shown to prompt user to install packages (when PackageKit not available) */
-                                         _("You need to install the %s package(s).").printf (string.joinv (", ", packages_to_install)));
-#endif
         }
 
         dialog.run ();
         dialog.destroy ();
     }
 
-#if HAVE_PACKAGEKIT
     private async Pk.Results? install_packages (string[] packages, Pk.ProgressCallback progress_callback) throws GLib.Error
     {
         var task = new Pk.Task ();
@@ -1699,7 +1693,6 @@ public class UserInterface : Gtk.ApplicationWindow
 
         return yield task.install_packages_async (package_ids, null, progress_callback);
     }
-#endif
 
     [GtkCallback]
     private bool simple_scan_window_window_state_event_cb (Gtk.Widget widget, Gdk.EventWindowState event)

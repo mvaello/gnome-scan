@@ -274,7 +274,6 @@ public class SimpleScan : Gtk.Application
 
     private string? get_profile_for_device (string device_name)
     {
-#if HAVE_COLORD
         var device_id = "sane:%s".printf (device_name);
         debug ("Getting color profile for device %s", device_name);
 
@@ -335,9 +334,6 @@ public class SimpleScan : Gtk.Application
 
         debug ("Using color profile %s for device %s", profile.filename, device_name);
         return profile.filename;
-#else
-        return null;
-#endif
     }
 
     private void scanner_page_info_cb (Scanner scanner, ScanPageInfo info)
